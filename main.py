@@ -7,33 +7,54 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
 def get_stocks_to_watch():
-    url = "https://www.moneycontrol.com/news/business/markets/"
+    base_url = "https://www.moneycontrol.com"
+    search_url = base_url + "/news/tags/stocks-to-watch.html"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(url, headers=headers)
+    response = requests.get(search_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
 
     article_link = None
     for link in soup.find_all("a", href=True):
-        if "stocks-to-watch" in link["href"]:
+        if "/news/business/markets/stocks-to-watch" in link["href"]:
             article_link = link["href"]
             break
 
     if not article_link:
-        return "No Stocks to Watch article found today."
+        return "⚠ Stocks to Watch article not found."
 
     if article_link.startswith("/"):
-        article_link = "https://www.moneycontrol.com" + article_link
+        article_link = base_url + article_link
 
     article = requests.get(article_link, headers=headers)
     article_soup = BeautifulSoup(article.text, "html.parser")
 
-    paragraphs = article_soup.find_all("p")
-    text = "\n".join([p.text for p in paragraphs[:25]])
+    content_div = article_soup.find("div", {"class": "content_wrapper"})
+    if not content_div:
+        content_div = article_soup
+
+    stock_lines = []
+
+    for strong_tag in content_div.find_all("strong"):
+        stock_name = strong_tag.get_text(strip=True)
+
+        # Get next paragraph after stock name
+        parent = strong_tag.parent
+        next_p = parent.find_next("p")
+
+        if next_p:
+            reason = next_p.get_text(strip=True)
+            formatted = f"• {stock_name} → {reason}"
+            stock_lines.append(formatted)
+
+    if not stock_lines:
+        return "⚠ Could not extract stock-wise format."
 
     today = datetime.now().strftime("%d %b %Y")
 
-    message = f"📊 Stocks to Watch – {today}\n\n{text}"
+    message = f"📊 Stocks to Watch – {today}\n\n"
+    message += "\n\n".join(stock_lines[:15])
+
     return message
 
 def send_telegram_message(message):

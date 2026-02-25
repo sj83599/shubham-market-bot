@@ -48,7 +48,7 @@ def send_telegram_message(message):
     response = requests.post(url, data=payload)
     print(response.text)  # IMPORTANT: Now we see Telegram response
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     message = get_stocks_to_watch()
     print("Sending message...")
     send_telegram_message(message)

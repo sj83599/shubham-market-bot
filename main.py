@@ -10,16 +10,18 @@ def get_stocks_to_watch():
     import re
 
     base_url = "https://www.moneycontrol.com"
-    search_url = base_url + "/news/tags/stocks-to-watch.html"
+    markets_url = base_url + "/news/business/markets/"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(search_url, headers=headers)
+    response = requests.get(markets_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
 
     article_link = None
+
     for link in soup.find_all("a", href=True):
-        if "/news/business/markets/stocks-to-watch" in link["href"]:
-            article_link = link["href"]
+        href = link["href"]
+        if "stocks-to-watch" in href:
+            article_link = href
             break
 
     if not article_link:

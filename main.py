@@ -29,19 +29,22 @@ def get_stocks_to_watch():
     article = requests.get(article_link, headers=headers)
     article_soup = BeautifulSoup(article.text, "html.parser")
 
-    paragraphs = article_soup.find_all("p")
+    content_div = article_soup.find("div", {"class": "content_wrapper"})
+    if not content_div:
+        content_div = article_soup
 
     stock_lines = []
 
-    for p in paragraphs:
-        text = p.text.strip()
+    for strong_tag in content_div.find_all("strong"):
+        stock_name = strong_tag.get_text(strip=True)
 
-        # Detect bullet-style stock lines (usually contain colon or dash)
-        if ":" in text and len(text) < 200:
-            parts = text.split(":", 1)
-            stock = parts[0].strip()
-            reason = parts[1].strip()
-            formatted = f"• {stock} → {reason}"
+        # Get next paragraph after stock name
+        parent = strong_tag.parent
+        next_p = parent.find_next("p")
+
+        if next_p:
+            reason = next_p.get_text(strip=True)
+            formatted = f"• {stock_name} → {reason}"
             stock_lines.append(formatted)
 
     if not stock_lines:
@@ -50,7 +53,7 @@ def get_stocks_to_watch():
     today = datetime.now().strftime("%d %b %Y")
 
     message = f"📊 Stocks to Watch – {today}\n\n"
-    message += "\n".join(stock_lines[:15])
+    message += "\n\n".join(stock_lines[:15])
 
     return message
 

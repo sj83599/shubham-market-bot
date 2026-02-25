@@ -15,8 +15,6 @@ def get_stocks_to_watch():
     soup = BeautifulSoup(response.text, "html.parser")
 
     article_link = None
-
-    # Find first article link on tag page
     for link in soup.find_all("a", href=True):
         if "/news/business/markets/stocks-to-watch" in link["href"]:
             article_link = link["href"]
@@ -32,22 +30,40 @@ def get_stocks_to_watch():
     article_soup = BeautifulSoup(article.text, "html.parser")
 
     paragraphs = article_soup.find_all("p")
-    text = "\n".join([p.text.strip() for p in paragraphs if p.text.strip()])
+
+    stock_lines = []
+
+    for p in paragraphs:
+        text = p.text.strip()
+
+        # Detect bullet-style stock lines (usually contain colon or dash)
+        if ":" in text and len(text) < 200:
+            parts = text.split(":", 1)
+            stock = parts[0].strip()
+            reason = parts[1].strip()
+            formatted = f"• {stock} → {reason}"
+            stock_lines.append(formatted)
+
+    if not stock_lines:
+        return "⚠ Could not extract stock-wise format."
 
     today = datetime.now().strftime("%d %b %Y")
 
-    message = f"📊 Stocks to Watch – {today}\n\n{text[:3500]}"
+    message = f"📊 Stocks to Watch – {today}\n\n"
+    message += "\n".join(stock_lines[:15])
+
     return message
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
         "chat_id": CHAT_ID,
-        "text": message
+        "text": message,
+        "parse_mode": "Markdown"
     }
 
     response = requests.post(url, data=payload)
-    print(response.text)  # IMPORTANT: Now we see Telegram response
+    print(response.text)
 
 if __name__ == "__main__":
     message = get_stocks_to_watch()

@@ -1,0 +1,7 @@
+services:
+  - type: cron
+    name: shubham-market-bot
+    env: python
+    schedule: "30 7 * * 1-5"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python main.py"

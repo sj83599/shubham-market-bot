@@ -33,19 +33,34 @@ def get_stocks_to_watch():
     if not content_div:
         content_div = article_soup
 
-    stock_lines = []
 
-    for strong_tag in content_div.find_all("strong"):
-        stock_name = strong_tag.get_text(strip=True)
+import re
 
-        # Get next paragraph after stock name
-        parent = strong_tag.parent
-        next_p = parent.find_next("p")
+stock_lines = []
 
-        if next_p:
-            reason = next_p.get_text(strip=True)
-            formatted = f"• {stock_name} → {reason}"
-            stock_lines.append(formatted)
+for strong_tag in content_div.find_all("strong"):
+    stock_name = strong_tag.get_text(strip=True)
+
+    # Skip unwanted headings
+    skip_words = ["Stocks to Watch", "Quarterly Earnings", "Results Today"]
+    if any(word in stock_name for word in skip_words):
+        continue
+
+    # Fix missing spacing like IndiaQ4-2025
+    stock_name = re.sub(r'([a-zA-Z])Q', r'\1 - Q', stock_name)
+
+    parent = strong_tag.parent
+    next_p = parent.find_next("p")
+
+    if next_p:
+        reason = next_p.get_text(strip=True)
+
+        # Shorten very long reasons
+        if len(reason) > 350:
+            reason = reason[:350] + "..."
+
+        formatted = f"• {stock_name} → {reason}"
+        stock_lines.append(formatted)
 
     if not stock_lines:
         return "⚠ Could not extract stock-wise format."

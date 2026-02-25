@@ -7,6 +7,8 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 CHAT_ID = os.environ.get("CHAT_ID")
 
 def get_stocks_to_watch():
+    import re
+
     base_url = "https://www.moneycontrol.com"
     search_url = base_url + "/news/tags/stocks-to-watch.html"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -33,34 +35,30 @@ def get_stocks_to_watch():
     if not content_div:
         content_div = article_soup
 
+    stock_lines = []
 
-import re
+    for strong_tag in content_div.find_all("strong"):
+        stock_name = strong_tag.get_text(strip=True)
 
-stock_lines = []
+        # Skip unwanted headings
+        skip_words = ["Stocks to Watch", "Quarterly Earnings", "Results Today"]
+        if any(word in stock_name for word in skip_words):
+            continue
 
-for strong_tag in content_div.find_all("strong"):
-    stock_name = strong_tag.get_text(strip=True)
+        # Fix missing spacing like IndiaQ4-2025
+        stock_name = re.sub(r'([a-zA-Z])Q', r'\1 - Q', stock_name)
 
-    # Skip unwanted headings
-    skip_words = ["Stocks to Watch", "Quarterly Earnings", "Results Today"]
-    if any(word in stock_name for word in skip_words):
-        continue
+        parent = strong_tag.parent
+        next_p = parent.find_next("p")
 
-    # Fix missing spacing like IndiaQ4-2025
-    stock_name = re.sub(r'([a-zA-Z])Q', r'\1 - Q', stock_name)
+        if next_p:
+            reason = next_p.get_text(strip=True)
 
-    parent = strong_tag.parent
-    next_p = parent.find_next("p")
+            if len(reason) > 350:
+                reason = reason[:350] + "..."
 
-    if next_p:
-        reason = next_p.get_text(strip=True)
-
-        # Shorten very long reasons
-        if len(reason) > 350:
-            reason = reason[:350] + "..."
-
-        formatted = f"• {stock_name} → {reason}"
-        stock_lines.append(formatted)
+            formatted = f"• {stock_name} → {reason}"
+            stock_lines.append(formatted)
 
     if not stock_lines:
         return "⚠ Could not extract stock-wise format."

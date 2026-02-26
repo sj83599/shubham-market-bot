@@ -62,7 +62,7 @@ def get_stocks_to_watch():
     message += "-" * 60 + "\n"
 
     for idx, (stock, reason) in enumerate(stock_data, start=1):
-    message += f"{idx}. {stock} | {reason}\n\n"
+        message += f"{idx}. {stock} | {reason}\n\n"
 
     return message
 

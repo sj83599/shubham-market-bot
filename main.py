@@ -58,14 +58,19 @@ def get_stocks_to_watch():
     return message
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": CHAT_ID,
-        "text": message,
-        "parse_mode": "Markdown"
-    }
 
-    response = requests.post(url, data=payload)
-    print(response.text)
+    chunk_size = 4000  # safety margin below 4096
+
+    for i in range(0, len(message), chunk_size):
+        chunk = message[i:i+chunk_size]
+
+        payload = {
+            "chat_id": CHAT_ID,
+            "text": chunk
+        }
+
+        response = requests.post(url, data=payload)
+        print(response.text)
 
 if __name__ == "__main__":
     message = get_stocks_to_watch()

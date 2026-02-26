@@ -2,7 +2,7 @@ name: Daily Market Bot
 
 on:
   schedule:
-    - cron: '25 2 * * *'   # 8:15 AM IST
+    - cron: '0 1 * * *'   # 6:30 AM IST
   workflow_dispatch:
 
 jobs:

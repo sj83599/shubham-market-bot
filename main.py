@@ -53,7 +53,7 @@ def get_stocks_to_watch():
     today = datetime.now().strftime("%d %b %Y")
 
     message = f"📊 Stocks to Watch – {today}\n\n"
-    message += "\n\n".join(stock_lines[:15])
+    message += "\n\n".join(stock_lines)
 
     return message
 def send_telegram_message(message):

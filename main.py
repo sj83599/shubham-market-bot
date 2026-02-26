@@ -56,15 +56,14 @@ def get_stocks_to_watch():
 
     today = datetime.now().strftime("%d %b %Y")
 
-    # Build table format
-    message = f"📊 Stocks to Watch – {today}\n\n"
-    message += "Stock Name | Reason\n"
-    message += "-" * 60 + "\n"
+message = f"📊 Stocks to Watch – {today}\n\n"
+message += "Stock Name | Reason\n"
+message += "-" * 60 + "\n"
 
-    for idx, (stock, reason) in enumerate(stock_data, start=1):
-        message += f"{idx}. {stock} | {reason}\n\n"
+for idx, (stock, reason) in enumerate(stock_data, start=1):
+    message += f"{idx}. {stock} | {reason}\n\n"
 
-    return message
+return message
 
 
 def send_telegram_message(message):

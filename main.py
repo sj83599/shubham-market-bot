@@ -8,52 +8,47 @@ CHAT_ID = os.environ.get("CHAT_ID")
 
 def get_stocks_to_watch():
     base_url = "https://www.moneycontrol.com"
-    search_url = base_url + "/news/tags/stocks-to-watch.html"
+    markets_url = base_url + "/news/business/markets/"
     headers = {"User-Agent": "Mozilla/5.0"}
 
-    response = requests.get(search_url, headers=headers)
+    # fetch markets page
+    response = requests.get(markets_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
 
     article_link = None
+
+    # look for the first link containing 'stocks-to-watch'
     for link in soup.find_all("a", href=True):
-        if "/news/business/markets/stocks-to-watch" in link["href"]:
-            article_link = link["href"]
+        href = link["href"]
+        if "stocks-to-watch" in href and "/news/business/markets/" in href:
+            article_link = href
             break
 
     if not article_link:
-        return "⚠ Stocks to Watch article not found."
+        return "⚠ Stocks to Watch article not found on Markets page."
 
+    # build full link if relative
     if article_link.startswith("/"):
         article_link = base_url + article_link
 
+    # fetch article page
     article = requests.get(article_link, headers=headers)
     article_soup = BeautifulSoup(article.text, "html.parser")
 
+    # extract all paragraphs
     content_div = article_soup.find("div", {"class": "content_wrapper"})
     if not content_div:
         content_div = article_soup
 
-    stock_lines = []
+    paragraphs = content_div.find_all("p")
+    if not paragraphs:
+        return "⚠ Article fetched but no content found."
 
-    for strong_tag in content_div.find_all("strong"):
-        stock_name = strong_tag.get_text(strip=True)
-
-        # Get next paragraph after stock name
-        parent = strong_tag.parent
-        next_p = parent.find_next("p")
-
-        if next_p:
-            reason = next_p.get_text(strip=True)
-            formatted = f"• {stock_name} → {reason}"
-            stock_lines.append(formatted)
-
-    if not stock_lines:
-        return "⚠ Could not extract stock-wise format."
+    # combine text
+    full_text = "\n\n".join([p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)])
 
     today = datetime.now().strftime("%d %b %Y")
-
-    message = f"📊 Stocks to Watch – {today}\n\n"
-    message += "\n\n".join(stock_lines)
+    message = f"📊 Stocks to Watch – {today}\n\n{full_text}"
 
     return message
 def send_telegram_message(message):

@@ -1,0 +1,64 @@
+name: Market close Excel tracker
+
+on:
+  schedule:
+    - cron: '45 0,2,12,15 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main, codex/market-close-tracker]
+    paths:
+      - 'market-tracker/collect.py'
+      - 'market-tracker/fill_workbook.py'
+      - 'market-tracker/test_tracker.py'
+      - 'market-tracker/template.xlsx'
+      - '.github/workflows/market-close-tracker.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-close-tracker-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update-excel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check parsers and date handling
+        run: python -m unittest discover -s market-tracker -p 'test_*.py'
+      - name: Fetch published closes
+        run: python market-tracker/collect.py
+      - name: Fill Excel workbook
+        run: python market-tracker/fill_workbook.py
+      - name: Report missing publications
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          h=json.loads(Path('market-tracker/history.json').read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('## Market close tracker\n\nLast attempt (IST): '+h['last_attempt_ist']+'\n\n')
+              f.write('\n'.join('- '+i for i in h['issues']) or 'All requested closes are available.')
+              f.write('\n\nDownload the workbook artifact below, or the latest committed Excel file.\n')
+          PY
+      - name: Save cloud master
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add market-tracker/history.json market-tracker/Market_Close_Tracker.xlsx
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update market close Excel history'
+            git push origin HEAD:main
+          fi
+      - name: Upload latest Excel
+        uses: actions/upload-artifact@v4
+        with:
+          name: Market-Close-Tracker
+          path: market-tracker/Market_Close_Tracker.xlsx
+          retention-days: 30

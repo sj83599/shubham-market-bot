@@ -1,0 +1,106 @@
+{
+  "india": {
+    "2026-11-11": {
+      "all_call": 267906945.0,
+      "all_put": 262855170.0,
+      "detail": "",
+      "expiry": "2026-11-17",
+      "indices_source": "https://nsearchives.nseindia.com/content/indices/ind_close_all_11112026.csv",
+      "near_call": 150509060.0,
+      "near_put": 115737180.0,
+      "nifty": 25255.05,
+      "nifty_pct": 0.0084,
+      "nifty_points": 210.4,
+      "options_source": "https://nsearchives.nseindia.com/content/fo/BhavCopy_NSE_FO_0_0_0_20261111_F_0000.csv.zip",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:41:46+05:30",
+      "vix": 17.56,
+      "vix_pct": 0.0077,
+      "vix_points": 0.14
+    },
+    "2026-11-12": {
+      "all_call": 303881550.0,
+      "all_put": 304707625.0,
+      "detail": "",
+      "expiry": "2026-11-17",
+      "indices_source": "https://nsearchives.nseindia.com/content/indices/ind_close_all_12112026.csv",
+      "near_call": 179154625.0,
+      "near_put": 152097660.0,
+      "nifty": 25299.35,
+      "nifty_pct": 0.0018,
+      "nifty_points": 44.3,
+      "options_source": "https://nsearchives.nseindia.com/content/fo/BhavCopy_NSE_FO_0_0_0_20261112_F_0000.csv.zip",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:41:46+05:30",
+      "vix": 16.62,
+      "vix_pct": -0.053399999999999996,
+      "vix_points": -0.94
+    },
+    "2026-11-13": {
+      "all_call": 333797430.0,
+      "all_put": 326715785.0,
+      "detail": "",
+      "expiry": "2026-11-17",
+      "indices_source": "https://nsearchives.nseindia.com/content/indices/ind_close_all_13112026.csv",
+      "near_call": 198865875.0,
+      "near_put": 165794330.0,
+      "nifty": 25144.3,
+      "nifty_pct": -0.0060999999999999995,
+      "nifty_points": -155.05,
+      "options_source": "https://nsearchives.nseindia.com/content/fo/BhavCopy_NSE_FO_0_0_0_20261113_F_0000.csv.zip",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:41:46+05:30",
+      "vix": 15.5,
+      "vix_pct": -0.0675,
+      "vix_points": -1.12
+    }
+  },
+  "issues": [],
+  "last_attempt_ist": "2026-11-16T00:41:46+05:30",
+  "us": {
+    "2026-11-10": {
+      "detail": "",
+      "dow": 52231.89,
+      "dow_previous": 52389.75,
+      "dow_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?range=1mo&interval=1d",
+      "nasdaq": 25065.87,
+      "nasdaq_previous": 25253.14,
+      "nasdaq_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1mo&interval=1d",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:39:49+05:30"
+    },
+    "2026-11-11": {
+      "detail": "",
+      "dow": 52486.49,
+      "dow_previous": 52231.89,
+      "dow_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?range=1mo&interval=1d",
+      "nasdaq": 25466.19,
+      "nasdaq_previous": 25065.87,
+      "nasdaq_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1mo&interval=1d",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:39:49+05:30"
+    },
+    "2026-11-12": {
+      "detail": "",
+      "dow": 52297.09,
+      "dow_previous": 52486.49,
+      "dow_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?range=1mo&interval=1d",
+      "nasdaq": 25366.09,
+      "nasdaq_previous": 25466.19,
+      "nasdaq_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1mo&interval=1d",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:39:49+05:30"
+    },
+    "2026-11-13": {
+      "detail": "",
+      "dow": 52347.55,
+      "dow_previous": 52297.09,
+      "dow_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?range=1mo&interval=1d",
+      "nasdaq": 25136.27,
+      "nasdaq_previous": 25366.09,
+      "nasdaq_source": "https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1mo&interval=1d",
+      "status": "Complete",
+      "updated_at": "2026-11-16T00:39:49+05:30"
+    }
+  }
+}
